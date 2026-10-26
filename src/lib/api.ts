@@ -75,7 +75,6 @@ const normalizeApiPath = (pathOrUrl: string): string => {
 const PUBLIC_ENDPOINTS = [
   'accounts/login/',
   'accounts/register/admin/',
-  'accounts/super-admin-register/',
   'accounts/register/school/',
   'password-reset/request/',
   'password-reset/verify-otp/',
@@ -326,7 +325,6 @@ export const api = {
 
   admin: {
     register: (data: any) => apiClient.post('accounts/register/admin/', data),
-    registerSuper: (data: any) => apiClient.post('accounts/super-admin-register/', data),
   },
 
   school: {

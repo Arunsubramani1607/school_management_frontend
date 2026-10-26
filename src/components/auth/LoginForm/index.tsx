@@ -19,6 +19,16 @@ import {
 
 import { useRouter } from 'next/navigation';
 
+const publicDemoCredentials =
+  process.env.NEXT_PUBLIC_DEMO_MODE === 'true' &&
+  process.env.NEXT_PUBLIC_DEMO_ADMIN_EMAIL &&
+  process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD
+    ? {
+        email: process.env.NEXT_PUBLIC_DEMO_ADMIN_EMAIL,
+        password: process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD,
+      }
+    : null;
+
 interface LoginFormProps {
   onSubmit?: (data: LoginData) => void;
 }
@@ -299,6 +309,24 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
             onShowPasswordToggle={() => setShowPassword(!showPassword)}
             showPassword={showPassword}
           />
+          {publicDemoCredentials && (
+            <aside className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950">
+              <div className="font-semibold">Try the public demo</div>
+              <div className="mt-2">Email: {publicDemoCredentials.email}</div>
+              <div>Password: {publicDemoCredentials.password}</div>
+              <button
+                type="button"
+                className="mt-3 rounded-lg bg-blue-700 px-3 py-2 font-medium text-white transition hover:bg-blue-800 disabled:opacity-60"
+                disabled={isLoading}
+                onClick={() => {
+                  setUsername(publicDemoCredentials.email);
+                  setPassword(publicDemoCredentials.password);
+                }}
+              >
+                Fill demo login
+              </button>
+            </aside>
+          )}
         </form>
 
         <ForgotPasswordDialog

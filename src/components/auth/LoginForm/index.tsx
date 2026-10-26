@@ -88,7 +88,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
 
 
   const handleSuccessfulLogin = (data: any) => {
-    console.log('Login successful:', data);
 
     if (!data.token) {
       toastError('No token received');
@@ -97,7 +96,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
 
     toastSuccess(`Welcome back, ${data.user_type}!`);
 
-    console.log("Received session key:", data.session_key);
 
     const enrichedData = {
       ...data,
@@ -264,7 +262,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
 
     setIsLoading(true);
     setApiResponse(null);
-    console.log('🚀 Login attempt with:', { username, password });
 
     // OTP verification step
     if (loginStep === 'otp') {
@@ -276,7 +273,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
       }
 
       try {
-        console.log('🔐 Verifying OTP:', { username, otp });
         const response = await api.auth.verifyOtp({ username, otp });
         const data = response.data;
 
@@ -349,7 +345,9 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
         !!data.user_type;
 
       if (isTwoFactorRequired) {
-        console.log('🔐 2FA required, switching to OTP step');
+        // The backend resolves email addresses to the account username; OTP
+        // verification uses that canonical username as its cache key.
+        if (data.username) setUsername(data.username);
         toastInfo('OTP sent successfully. Please enter the 4-digit code.');
         startOtpFlow();
       } else if (isFinalizedLogin) {

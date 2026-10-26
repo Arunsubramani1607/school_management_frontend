@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import Cookies from 'js-cookie';
 import { api } from '@/lib/api';
 import { LoginFormFields } from './LoginFormFields';
 import { OTPForm } from './OTPForm';
@@ -51,6 +52,25 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
+
+  const enterDemo = (userType: 'admin' | 'teacher' | 'student') => {
+    const demoUsers = {
+      admin: { username: 'demo.admin', name: 'Demo Administrator', school_name: 'Senthur Vidyalaya (Demo)' },
+      teacher: { username: 'demo.teacher', name: 'Demo Teacher', school_name: 'Senthur Vidyalaya (Demo)', class: '8', section: 'A' },
+      student: { username: 'demo.student', name: 'Demo Student', school_name: 'Senthur Vidyalaya (Demo)', class: '8', section: 'A' },
+    };
+    const demoUser = demoUsers[userType];
+    login({
+      ...demoUser,
+      id: demoUser.username,
+      user_type: userType,
+      token: 'demo-session',
+      session_key: 'demo-session',
+      is_demo: true,
+    }, false);
+    Cookies.set('demo_mode', 'true', { expires: 1, sameSite: 'strict' });
+    router.push(`/${userType}`);
+  };
 
   const resetOtpFlow = () => {
     otpTimerStartedRef.current = false;
@@ -414,6 +434,24 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
             />
           )}
         </form>
+
+        {loginStep === 'initial' && (
+          <div className="mt-5 border-t border-gray-200 pt-4">
+            <p className="mb-3 text-center text-sm text-gray-600">Or explore with a demo account</p>
+            <div className="grid grid-cols-3 gap-2">
+              {(['admin', 'teacher', 'student'] as const).map((role) => (
+                <button
+                  key={role}
+                  type="button"
+                  onClick={() => enterDemo(role)}
+                  className="rounded-lg border border-blue-200 bg-white px-2 py-2 text-xs font-semibold capitalize text-blue-700 transition hover:bg-blue-50"
+                >
+                  Demo {role}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <ForgotPasswordDialog
           isOpen={forgotPasswordOpen}

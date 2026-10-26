@@ -27,6 +27,7 @@ import { motion } from 'framer-motion';
 import { toastError, toastInfo } from '@/lib/toast';
 import { useThemeClasses } from '@/hooks/useThemeClasses';
 import { studentApi } from '@/lib/api';
+import Cookies from 'js-cookie';
 
 /* ---------------- TYPES ---------------- */
 
@@ -92,6 +93,28 @@ export const StudentMainContent = ({ profileData }: { profileData: any }) => {
   const loadDashboardData = async () => {
     setLoading(true);
     try {
+      if (Cookies.get('demo_mode') === 'true') {
+        const today = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+        setAssignments([
+          { id: 1, title: 'Fractions and Decimals', subject: 'Mathematics', due_date: tomorrow, status: 'Pending', posted_by: 'Ms. Priya' },
+          { id: 2, title: 'The Solar System', subject: 'Science', due_date: tomorrow, status: 'Pending', posted_by: 'Mr. Kumar' },
+          { id: 3, title: 'Reading Journal', subject: 'English', due_date: today, status: 'Submitted', posted_by: 'Ms. Anitha' },
+        ]);
+        setExams([{ exam_type: 'Unit Test 2', start_date: tomorrow, end_date: tomorrow, status: 'Upcoming' }]);
+        setAnnouncements([
+          { announcement_number: 1, description: 'Science exhibition entries are due this Friday.', posted_by: 'School Office', posted_time: today },
+          { announcement_number: 2, description: 'Bring your library book for the weekly reading period.', posted_by: 'Class Teacher', posted_time: today },
+        ]);
+        setTimetable({ timetable: [
+          { id: 1, subject: 'Mathematics', start_time: '09:00', day: 'Monday' },
+          { id: 2, subject: 'Science', start_time: '10:00', day: 'Monday' },
+          { id: 3, subject: 'English', start_time: '11:30', day: 'Monday' },
+        ] });
+        setNextClass({ subject: 'Mathematics', start_time: '09:00', room: 'Class 8A' });
+        setStats({ pendingAssignments: 2, attendancePercentage: '96%', upcomingExams: 1, unreadAnnouncements: 2 });
+        return;
+      }
       const today = new Date().toISOString().split('T')[0];
       const currentYear = new Date().getFullYear();
 

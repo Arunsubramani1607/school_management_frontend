@@ -53,11 +53,12 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
   const [resetLoading, setResetLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
 
-  const enterDemo = (userType: 'admin' | 'teacher' | 'student') => {
+  const enterDemo = (userType: 'admin' | 'teacher' | 'student' | 'staff') => {
     const demoUsers = {
       admin: { username: 'demo.admin', name: 'Demo Administrator', school_name: 'Senthur Vidyalaya (Demo)' },
       teacher: { username: 'demo.teacher', name: 'Demo Teacher', school_name: 'Senthur Vidyalaya (Demo)', class: '8', section: 'A' },
       student: { username: 'demo.student', name: 'Demo Student', school_name: 'Senthur Vidyalaya (Demo)', class: '8', section: 'A' },
+      staff: { username: 'demo.staff', name: 'Demo Staff', school_name: 'Senthur Vidyalaya (Demo)' },
     };
     const demoUser = demoUsers[userType];
     login({
@@ -438,8 +439,8 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
         {loginStep === 'initial' && (
           <div className="mt-5 border-t border-gray-200 pt-4">
             <p className="mb-3 text-center text-sm text-gray-600">Or explore with a demo account</p>
-            <div className="grid grid-cols-3 gap-2">
-              {(['admin', 'teacher', 'student'] as const).map((role) => (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {(['admin', 'teacher', 'student', 'staff'] as const).map((role) => (
                 <button
                   key={role}
                   type="button"

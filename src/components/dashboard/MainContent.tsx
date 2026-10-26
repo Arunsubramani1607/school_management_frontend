@@ -46,6 +46,7 @@ import { InventoryUpdatesToday } from './InventoryUpdatesToday';
 import { StaffWorkUpdatesToday } from './StaffWorkUpdatesToday';
 
 import { adminApi } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 import axios from 'axios';
 
@@ -480,6 +481,7 @@ const FullScreenChartModal = ({
 
 export const MainContent = () => {
   const router = useRouter();
+  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [schoolOptions, setSchoolOptions] = useState<DashboardSchoolOption[]>([]);
@@ -551,6 +553,55 @@ export const MainContent = () => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
+        if (user?.is_demo) {
+          const now = new Date();
+          const demoStats: DashboardStats = {
+            meta: {
+              date: now.toISOString().split('T')[0],
+              academic_year: '2026–2027',
+              generated_at: now.toISOString(),
+              role_scope: 'school',
+              school_id: 1,
+              school_name: 'Senthur Vidyalaya (Demo)',
+              time_periods: { daily: 'Today', weekly: 'This week', monthly: 'This month' },
+            },
+            students: {
+              total: 642,
+              gender_distribution: { male: 328, female: 306, other: 8, male_percentage: 51, female_percentage: 48 },
+              today: { present: 604, absent: 24, late: 8, total_marked: 636, unmarked: 6, attendance_percentage: 95 },
+              overall: { attendance_percentage: 94, present_this_month: 12080, absent_this_month: 624, late_this_month: 160, monthly_summary: { present_percentage: 94, absent_percentage: 5, late_percentage: 1 } },
+            },
+            teachers: { total: 38, today: { present: 35, late: 1, absent: 2, attendance_percentage: 92 } },
+            staff: { total: 16, today: { present: 15, late: 0, absent: 1, attendance_percentage: 94 } },
+            academics: {
+              total_classes: 10,
+              total_sections: 18,
+              class_details: [
+                { class_name: 'Class 8', student_count: 72, section_count: 2 },
+                { class_name: 'Class 9', student_count: 68, section_count: 2 },
+              ],
+              system_defined: { total_classes: 10, total_sections: 18 },
+              inactive: { classes: 0, sections: 0 },
+            },
+          };
+          const demoOverview: DashboardOverview = {
+            school_name: 'Senthur Vidyalaya (Demo)',
+            school_id: 1,
+            active_academic_year: '2026–2027',
+            total_students: 642,
+            total_teachers: 38,
+            total_staff: 16,
+            trend: 'increase',
+            percentage_change: '+4.8%',
+            comparison_text: 'compared with last academic year',
+            previous_year_total: 613,
+          };
+          setStats(demoStats);
+          setOverview(demoOverview);
+          setSchoolOptions([{ id: 1, name: 'Senthur Vidyalaya (Demo)' }]);
+          setError(null);
+          return;
+        }
         const params = selectedSchoolId !== 'all' && selectedSchoolId !== '__refresh__'
           ? { school_id: Number(selectedSchoolId) }
           : undefined;
@@ -633,7 +684,7 @@ export const MainContent = () => {
     };
 
     fetchDashboardData();
-  }, [selectedSchoolId]);
+  }, [selectedSchoolId, user?.is_demo]);
 
   // Theme-aware CSS classes using the theme system
   const getBgClass = () => combine(

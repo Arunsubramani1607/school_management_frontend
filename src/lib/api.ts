@@ -10,7 +10,7 @@ const ENABLE_ENCRYPTION =
   process.env.NEXT_PUBLIC_ENABLE_ENCRYPTION?.toLowerCase() === 'true';
 
 
-const DEFAULT_BACKEND_API = 'https://senthurvidyalaya-backend.onrender.com';
+const DEFAULT_BACKEND_API = 'https://school-management-backend-gsza.onrender.com';
 const configuredBackendApi =
   process.env.NEXT_PUBLIC_BACKEND_API?.trim() ||
   process.env.NEXT_PUBLIC_API_URL?.trim() ||

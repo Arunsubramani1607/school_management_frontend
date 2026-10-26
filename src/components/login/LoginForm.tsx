@@ -127,7 +127,7 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
 
       try {
         const res = await fetch(
-          'https://senthurvidyalaya-backend.onrender.com/api/accounts/verify-otp/',
+          'https://school-management-backend-gsza.onrender.com/api/accounts/verify-otp/',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -183,7 +183,7 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
     // Login API call
     try {
       const res = await fetch(
-        'https://senthurvidyalaya-backend.onrender.com/api/accounts/login/',
+        'https://school-management-backend-gsza.onrender.com/api/accounts/login/',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

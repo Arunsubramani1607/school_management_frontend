@@ -45,8 +45,8 @@ export default function FeeStructure({ academicYear }: FeeStructureProps) {
     try {
       const token = localStorage.getItem('token');
       const url = selectedFeeType 
-        ? `https://senthurvidyalaya-backend.onrender.com/api/fees/structure/view/?academic_year=${academicYear}&fee_type=${selectedFeeType}`
-        : `https://senthurvidyalaya-backend.onrender.com/api/fees/structure/view/?academic_year=${academicYear}&fee_type=Tuition`; // Default to Tuition
+        ? `https://school-management-backend-gsza.onrender.com/api/fees/structure/view/?academic_year=${academicYear}&fee_type=${selectedFeeType}`
+        : `https://school-management-backend-gsza.onrender.com/api/fees/structure/view/?academic_year=${academicYear}&fee_type=Tuition`; // Default to Tuition
 
       const response = await fetch(url, {
         headers: {
@@ -70,7 +70,7 @@ export default function FeeStructure({ academicYear }: FeeStructureProps) {
   const fetchClasses = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://senthurvidyalaya-backend.onrender.com/api/academics/standards/', {
+      const response = await fetch('https://school-management-backend-gsza.onrender.com/api/academics/standards/', {
         headers: {
           'Authorization': `Token ${token}`,
         },
@@ -110,8 +110,8 @@ export default function FeeStructure({ academicYear }: FeeStructureProps) {
     try {
       const token = localStorage.getItem('token');
       const url = editingFee 
-        ? 'https://senthurvidyalaya-backend.onrender.com/api/fees/structure/update/'
-        : 'https://senthurvidyalaya-backend.onrender.com/api/fees/assign/';
+        ? 'https://school-management-backend-gsza.onrender.com/api/fees/structure/update/'
+        : 'https://school-management-backend-gsza.onrender.com/api/fees/assign/';
       
       const payload = editingFee
         ? {
@@ -169,7 +169,7 @@ export default function FeeStructure({ academicYear }: FeeStructureProps) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://senthurvidyalaya-backend.onrender.com/api/fees/delete/', {
+      const response = await fetch('https://school-management-backend-gsza.onrender.com/api/fees/delete/', {
         method: 'DELETE',
         headers: {
           'Authorization': `Token ${token}`,

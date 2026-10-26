@@ -11,7 +11,7 @@ export const TestLogin = () => {
     setLoading(true);
     try {
       // Test with dummy credentials - adjust based on your API
-      const response = await fetch('https://senthurvidyalaya-backend.onrender.com/api/accounts/login/', {
+      const response = await fetch('https://school-management-backend-gsza.onrender.com/api/accounts/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

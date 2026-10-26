@@ -1,7 +1,7 @@
 // TeacherApiService.js
 import axios from 'axios';
 
-const API_BASE_URL = 'https://senthurvidyalaya-backend.onrender.com/api';
+const API_BASE_URL = 'https://school-management-backend-gsza.onrender.com/api';
 
 // Create axios instance with auth token
 const api = axios.create({

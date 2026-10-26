@@ -1,5 +1,5 @@
 // API functions for teachers performance
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://senthurvidyalaya-backend.onrender.com/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://school-management-backend-gsza.onrender.com/api';
 
 export const teachersPerformanceAPI = {
   // Get class teacher marks view

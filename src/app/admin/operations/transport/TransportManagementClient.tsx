@@ -4049,7 +4049,7 @@ const confirmDelete = (
                           {new Date(expense.timestamp).toLocaleDateString()}
                         </span>
                         <a
-                          href={`https://senthurvidyalaya-backend.onrender.com${expense.proof_file}`}
+                          href={`https://school-management-backend-gsza.onrender.com${expense.proof_file}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className={combine(

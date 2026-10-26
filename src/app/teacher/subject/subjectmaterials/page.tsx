@@ -16,7 +16,7 @@ import { toastError, toastSuccess } from '@/lib/toast';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useThemeClasses } from '@/hooks/useThemeClasses';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_MEDIA_BASE_URL || 'https://senthurvidyalaya-backend.onrender.com';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_MEDIA_BASE_URL || 'https://school-management-backend-gsza.onrender.com';
 
 // Types
 interface SubjectMaterial {

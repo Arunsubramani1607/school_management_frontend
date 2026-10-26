@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://senthurvidyalaya-backend.onrender.com',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://school-management-backend-gsza.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },

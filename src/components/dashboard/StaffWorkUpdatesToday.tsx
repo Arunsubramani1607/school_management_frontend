@@ -57,7 +57,7 @@ const statusBadge = (status: string) => {
 const resolveProofUrl = (proofUrl: string) => {
   if (/^https?:\/\//i.test(proofUrl)) return proofUrl;
   const normalizedPath = proofUrl.startsWith('/') ? proofUrl : `/${proofUrl}`;
-  return `https://senthurvidyalaya-backend.onrender.com${normalizedPath}`;
+  return `https://school-management-backend-gsza.onrender.com${normalizedPath}`;
 };
 
 export const StaffWorkUpdatesToday = ({

@@ -41,7 +41,7 @@ interface ClassResourceSummary {
   unique_subjects: number;
 }
 
-const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_API_MEDIA_BASE_URL || 'https://senthurvidyalaya-backend.onrender.com';
+const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_API_MEDIA_BASE_URL || 'https://school-management-backend-gsza.onrender.com';
 
 export default function ClassResources() {
   const { theme } = useTheme();

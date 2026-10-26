@@ -1,7 +1,7 @@
 // utils/feesApi.ts
 import { toast } from 'react-toastify';
 
-const API_BASE_URL = 'https://senthurvidyalaya-backend.onrender.com/api';
+const API_BASE_URL = 'https://school-management-backend-gsza.onrender.com/api';
 
 export interface FeeStructure {
   id: number;

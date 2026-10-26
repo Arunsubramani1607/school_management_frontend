@@ -30,7 +30,7 @@ export default function PerformanceAnalytics() {
   const fetchClassStudents = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://senthurvidyalaya-backend.onrender.com/api/student/list/', {
+      const response = await fetch('https://school-management-backend-gsza.onrender.com/api/student/list/', {
         headers: {
           'Authorization': `Token ${token}`,
           'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ export default function PerformanceAnalytics() {
       
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `https://senthurvidyalaya-backend.onrender.com/api/performance/class/marks/?student_id=${id}`,
+        `https://school-management-backend-gsza.onrender.com/api/performance/class/marks/?student_id=${id}`,
         {
           headers: {
             'Authorization': `Token ${token}`,

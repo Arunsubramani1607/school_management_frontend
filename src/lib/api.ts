@@ -74,7 +74,6 @@ const normalizeApiPath = (pathOrUrl: string): string => {
 // Public endpoints that shouldn't be encrypted
 const PUBLIC_ENDPOINTS = [
   'accounts/login/',
-  'accounts/verify-otp/',
   'accounts/register/admin/',
   'accounts/super-admin-register/',
   'accounts/register/school/',
@@ -312,8 +311,6 @@ export const api = {
       return response;
     },
 
-    verifyOtp: (data: { username: string; otp: string }) =>
-      apiClient.post('accounts/verify-otp/', data),
   },
 
   passwordReset: {

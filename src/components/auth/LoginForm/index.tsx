@@ -2,18 +2,16 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import { LoginFormFields } from './LoginFormFields';
-import { OTPForm } from './OTPForm';
 import { ForgotPasswordDialog } from './ForgotPasswordDialog';
 import { LoginData } from '@/types';
 // Import toast functions
 import {
-  toastInfo,
   toastError,
   toastSuccess,
   toastWarning
@@ -37,12 +35,8 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
     username?: string;
     password?: string;
   }>({});
-  const [loginStep, setLoginStep] = useState<'initial' | 'otp'>('initial');
-  const [otp, setOtp] = useState('');
-  const [timeLeft, setTimeLeft] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [apiResponse, setApiResponse] = useState<any>(null);
-  const otpTimerStartedRef = useRef(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [resetStep, setResetStep] = useState<'request' | 'otp' | 'password'>('request');
   const [resetUsername, setResetUsername] = useState('');
@@ -51,41 +45,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
-
-  const resetOtpFlow = () => {
-    otpTimerStartedRef.current = false;
-    setOtp('');
-    setTimeLeft(0);
-    setLoginStep('initial');
-  };
-
-  const startOtpFlow = () => {
-    otpTimerStartedRef.current = true;
-    setOtp('');
-    setTimeLeft(300);
-    setLoginStep('otp');
-  };
-
-  // OTP Countdown Timer
-  useEffect(() => {
-    if (loginStep === 'otp' && otpTimerStartedRef.current && timeLeft === 0) {
-      toastError('OTP has expired. Please login again.');
-      resetOtpFlow();
-    }
-  }, [loginStep, timeLeft]);
-
-  useEffect(() => {
-    if (loginStep !== 'otp') return;
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [loginStep]);
-
-
-
 
   const handleSuccessfulLogin = (data: any) => {
 
@@ -263,52 +222,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
     setIsLoading(true);
     setApiResponse(null);
 
-    // OTP verification step
-    if (loginStep === 'otp') {
-      if (timeLeft <= 0) {
-        toastError('OTP Expired');
-        resetOtpFlow();
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const response = await api.auth.verifyOtp({ username, otp });
-        const data = response.data;
-
-        console.log('✅ OTP verification response:', data);
-
-        const otpVerified =
-          !!data.token &&
-          !!data.session_key &&
-          !!data.user_type;
-
-        if (otpVerified) {
-          toastSuccess('OTP verified successfully!');
-          handleSuccessfulLogin(data);
-        } else {
-          const errorMessage = data.error || data.message || 'Invalid OTP';
-          toastError(errorMessage);
-          console.error('❌ OTP verification failed:', errorMessage);
-
-          // 🔁 Go back to login form
-          resetOtpFlow();
-        }
-      } catch (error: any) {
-        const errorMessage =
-          error.response?.data?.error ||
-          error.response?.data?.message ||
-          error.message ||
-          'Something went wrong. Please try again.';
-
-        toastError(errorMessage);
-        resetOtpFlow();
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
     // Initial login validation
     const newErrors: any = {};
 
@@ -331,28 +244,18 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
     }
 
     try {
-      console.log('📡 Sending login request...');
       const response = await api.auth.login({ username, password });
       const data = response.data;
 
-      console.log('📥 Login API response:', data);
       setApiResponse(data);
 
-      const isTwoFactorRequired = data.status === '2FA_REQUIRED';
       const isFinalizedLogin =
         !!data.token &&
         !!data.session_key &&
         !!data.user_type;
 
-      if (isTwoFactorRequired) {
-        // The backend resolves email addresses to the account username; OTP
-        // verification uses that canonical username as its cache key.
-        if (data.username) setUsername(data.username);
-        toastInfo('OTP sent successfully. Please enter the 4-digit code.');
-        startOtpFlow();
-      } else if (isFinalizedLogin) {
+      if (isFinalizedLogin) {
         toastSuccess('Login successful!');
-        console.log('✅ Login successful, processing...');
         handleSuccessfulLogin(data);
       } else {
         const errorMessage = data.error || data.message || 'Login failed';
@@ -376,41 +279,26 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={loginStep}
+        key="login"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.3 }}
       >
         <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-          {loginStep === 'otp' ? (
-            <OTPForm
-              username={username}
-              otp={otp}
-              timeLeft={timeLeft}
-              isLoading={isLoading}
-              onOtpChange={setOtp}
-              onBackToLogin={() => {
-                setLoginStep('initial');
-                setOtp('');
-                toastInfo('Returned to login form');
-              }}
-            />
-          ) : (
-            <LoginFormFields
-              username={username}
-              password={password}
-              rememberMe={rememberMe}
-              errors={errors}
-              isLoading={isLoading}
-              onUsernameChange={setUsername}
-              onPasswordChange={setPassword}
-              onRememberMeChange={setRememberMe}
-              onForgotPassword={handleForgotPassword}
-              onShowPasswordToggle={() => setShowPassword(!showPassword)}
-              showPassword={showPassword}
-            />
-          )}
+          <LoginFormFields
+            username={username}
+            password={password}
+            rememberMe={rememberMe}
+            errors={errors}
+            isLoading={isLoading}
+            onUsernameChange={setUsername}
+            onPasswordChange={setPassword}
+            onRememberMeChange={setRememberMe}
+            onForgotPassword={handleForgotPassword}
+            onShowPasswordToggle={() => setShowPassword(!showPassword)}
+            showPassword={showPassword}
+          />
         </form>
 
         <ForgotPasswordDialog

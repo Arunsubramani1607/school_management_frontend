@@ -31,24 +31,8 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
     username?: string; 
     password?: string;
   }>({});
-  const [loginStep, setLoginStep] = useState<'initial' | 'otp'>('initial');
-  const [otp, setOtp] = useState('');
-  const [timeLeft, setTimeLeft] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  // =============================
-  // OTP Countdown Timer
-  // =============================
-  useEffect(() => {
-    if (loginStep !== 'otp' || timeLeft <= 0) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [loginStep, timeLeft]);
 
   const clearError = (field: 'username' | 'password') => {
     if (errors[field]) {
@@ -104,40 +88,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // If in OTP step, verify OTP
-    if (loginStep === 'otp') {
-      if (timeLeft <= 0) {
-        alert('OTP expired. Please login again.');
-        window.location.reload();
-        return;
-      }
-
-      try {
-        const res = await fetch(
-          'https://school-management-backend-gsza.onrender.com/api/accounts/verify-otp/',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, otp })
-          }
-        );
-
-        const data = await res.json();
-
-        if (res.ok) {
-          handleSuccessfulLogin(data);
-        } else {
-          alert(data.error || 'Invalid OTP');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('OTP verification failed');
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
     // Initial login validation
     const newErrors: any = {};
 
@@ -173,12 +123,7 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
       const data = await res.json();
 
       if (res.ok) {
-        if (data.status === '2FA_REQUIRED') {
-          setLoginStep('otp');
-          setTimeLeft(300); // 5 minutes
-        } else {
-          handleSuccessfulLogin(data);
-        }
+        handleSuccessfulLogin(data);
       } else {
         alert(data.error || 'Login failed');
       }
@@ -240,90 +185,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
 
     checkExistingSession();
   }, []);
-
-  // =============================
-  // RENDER OTP FORM
-  // =============================
-  if (loginStep === 'otp') {
-    return (
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Enter OTP
-            </label>
-            <input
-              type="text"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-              placeholder="Enter 6-digit OTP"
-              disabled={isLoading}
-              maxLength={4}
-              pattern="[0-9]*"
-              inputMode="numeric"
-            />
-            <p className="mt-2 text-sm text-gray-500">
-              OTP sent to registered email for <b>{username}</b>
-            </p>
-            <p className={`mt-1 text-sm ${timeLeft < 60 ? 'text-red-500' : 'text-amber-500'}`}>
-              OTP expires in {Math.floor(timeLeft / 60)}:
-              {String(timeLeft % 60).padStart(2, '0')}
-            </p>
-          </div>
-
-          {timeLeft < 240 && (
-            <p className="text-sm text-gray-500">
-              OTP resend is not available. Please go back and login again.
-            </p>
-          )}
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isLoading || otp.length !== 4}
-          className={`w-full ${
-            isLoading || otp.length !== 4
-              ? 'bg-blue-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'
-          } text-white font-semibold py-3.5 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          {isLoading ? (
-            <>
-              <span>Verifying...</span>
-              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            </>
-          ) : (
-            <>
-              <span>Verify OTP</span>
-              <FaArrowRight
-                className={`transition-transform ${
-                  isHovered ? 'translate-x-2' : ''
-                }`}
-              />
-            </>
-          )}
-        </button>
-
-        {/* Back to login */}
-        <div className="text-center">
-          <button
-            type="button"
-            onClick={() => {
-              setLoginStep('initial');
-              setOtp('');
-            }}
-            className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
-          >
-            ← Back to login
-          </button>
-        </div>
-      </form>
-    );
-  }
 
   // =============================
   // INITIAL LOGIN FORM

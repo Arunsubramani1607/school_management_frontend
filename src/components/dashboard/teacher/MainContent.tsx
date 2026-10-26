@@ -11,7 +11,6 @@ import {
   toastUpdateError
 } from '@/lib/toast';
 import { teacherApi } from '@/lib/api';
-import Cookies from 'js-cookie';
 
 // Components
 import { ClassAttendance } from './ClassAttendance';
@@ -83,38 +82,6 @@ export const TeacherMainContent = () => {
     try {
       setLoading(true);
       setErrors({});
-
-      if (Cookies.get('demo_mode') === 'true') {
-        const day = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-        setTeacher({
-          full_name: 'Demo Teacher',
-          designation: 'Class Teacher',
-          subject: 'Mathematics',
-          class: '8',
-          section: 'A',
-          handled_subjects: { Mathematics: { '8': ['A'] } },
-        });
-        setTimetable({ timetable: [
-          { id: 1, day, subject: 'Mathematics', start_time: '09:00', end_time: '09:45', class_name: '8', section: 'A' },
-          { id: 2, day, subject: 'Science', start_time: '10:00', end_time: '10:45', class_name: '8', section: 'A' },
-          { id: 3, day, subject: 'English', start_time: '11:30', end_time: '12:15', class_name: '8', section: 'A' },
-        ] });
-        setAttendance({ present: 28, absent: 2, total_students: 30, attendance_percentage: 93 });
-        setAssignments([
-          { id: 1, title: 'Fractions and Decimals', subject: 'Mathematics', due_date: new Date(Date.now() + 86400000).toISOString().split('T')[0], status: 'Pending', submission_count: 24, total_students: 30 },
-          { id: 2, title: 'Practice worksheet 8B', subject: 'Mathematics', due_date: new Date(Date.now() + 2 * 86400000).toISOString().split('T')[0], status: 'Active', submission_count: 18, total_students: 30 },
-        ]);
-        setResources([
-          { id: 1, title: 'Fractions revision notes', subject: 'Mathematics', resource_type: 'PDF', uploaded_at: new Date().toISOString() },
-          { id: 2, title: 'Practice problems: decimals', subject: 'Mathematics', resource_type: 'Worksheet', uploaded_at: new Date().toISOString() },
-        ]);
-        setTasks([{ id: 1, title: 'Review weekly quiz results', subject: 'Mathematics', status: 'Pending', due_date: new Date().toISOString().split('T')[0] }]);
-        setAnnouncements([
-          { id: 1, title: 'Parent meeting next week', description: 'Please share student progress updates before Friday.', posted_by: 'School Office', date: new Date().toISOString() },
-          { id: 2, title: 'Science exhibition', description: 'Class 8 project proposals are now open.', posted_by: 'Academic Coordinator', date: new Date().toISOString() },
-        ]);
-        return;
-      }
 
       // Load profile first to get class/section info
       let profileData: any = null;

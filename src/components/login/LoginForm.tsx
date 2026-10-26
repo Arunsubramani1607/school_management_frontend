@@ -37,18 +37,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const enterDemo = (userType: 'admin' | 'teacher' | 'student') => {
-    const demoUsers = {
-      admin: { username: 'demo.admin', name: 'Demo Administrator', school_name: 'Senthur Vidyalaya (Demo)' },
-      teacher: { username: 'demo.teacher', name: 'Demo Teacher', school_name: 'Senthur Vidyalaya (Demo)', class: '8', section: 'A' },
-      student: { username: 'demo.student', name: 'Demo Student', school_name: 'Senthur Vidyalaya (Demo)', class: '8', section: 'A' },
-    };
-    const demoUser = demoUsers[userType];
-    login({ ...demoUser, id: demoUser.username, user_type: userType, token: 'demo-session', session_key: 'demo-session', is_demo: true }, false);
-    Cookies.set('demo_mode', 'true', { expires: 1, sameSite: 'strict' });
-    router.push(`/${userType}`);
-  };
-  
   // =============================
   // OTP Countdown Timer
   // =============================
@@ -70,7 +58,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
 
   // Function to handle successful login
   const handleSuccessfulLogin = (data: any) => {
-    Cookies.remove('demo_mode');
     console.log('Login successful, data:', data);
 
     const authData = {
@@ -168,14 +155,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Demo accounts work without a backend or real credentials.
-    if (username.toLowerCase().startsWith('demo.')) {
-      const role = username.toLowerCase().includes('teacher') ? 'teacher' : username.toLowerCase().includes('student') ? 'student' : 'admin';
-      enterDemo(role);
       setIsLoading(false);
       return;
     }
@@ -477,19 +456,6 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
         )}
       </button>
     </form>
-    <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
-      <div className="mb-3">
-        <p className="text-sm font-semibold text-blue-950">Explore demo mode</p>
-        <p className="mt-1 text-xs text-blue-800">Enter a sample dashboard without an account. No password needed.</p>
-      </div>
-      <div className="grid grid-cols-3 gap-2">
-        {(['admin', 'teacher', 'student'] as const).map((role) => (
-          <button key={role} type="button" onClick={() => enterDemo(role)} className="rounded-lg border border-blue-200 bg-white px-2 py-2 text-xs font-semibold capitalize text-blue-700 transition hover:bg-blue-100">
-            Demo {role}
-          </button>
-        ))}
-      </div>
-    </div>
     </div>
   );
 };

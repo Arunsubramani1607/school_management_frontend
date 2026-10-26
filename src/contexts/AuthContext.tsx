@@ -26,7 +26,6 @@ interface User {
   institution_id?: number | null;
   institution_name?: string | null;
   can_access_all_schools?: boolean;
-  is_demo?: boolean;
 }
 
 interface AuthContextType {
@@ -64,7 +63,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const sessionKey = Cookies.get('session_key');
     const userCookie = Cookies.get('auth_user');
 
-    if (token && sessionKey) {
+    const isLegacyDemoSession = token === 'demo-session' || userCookie?.includes('"is_demo":true');
+    if (isLegacyDemoSession) {
+      Cookies.remove('token');
+      Cookies.remove('session_key');
+      Cookies.remove('auth_user');
+      Cookies.remove('auth_user_type');
+      Cookies.remove('demo_mode');
+    } else if (token && sessionKey) {
       if (userCookie) {
         try {
           setUser(JSON.parse(userCookie));
@@ -111,7 +117,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       institution_id: data.institution_id ?? null,
       institution_name: data.institution_name ?? null,
       can_access_all_schools: Boolean(data.can_access_all_schools),
-      is_demo: Boolean(data.is_demo),
     };
     setUser(userData);
     Cookies.set('auth_user', JSON.stringify(userData), getCookieOptions(expirationDays));
@@ -120,7 +125,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     clearAllCookies();
-    Cookies.remove('demo_mode');
     localStorage.clear();
     sessionStorage.clear();
 

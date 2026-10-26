@@ -9,7 +9,7 @@ import {LoadingSpinner} from '@/components/ui/LoadingSpinner';
 import { studentApi } from '@/lib/api';
 
 export default function StudentDashboardPage() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const router = useRouter();
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -22,18 +22,6 @@ export default function StudentDashboardPage() {
   const fetchProfileData = async () => {
     try {
       setLoading(true);
-      if (user?.is_demo) {
-        setProfileData({
-          id: user.id,
-          student_id: user.id,
-          name: user.name,
-          full_name: user.full_name,
-          class: user.class,
-          section: user.section,
-          school_name: user.school_name,
-        });
-        return;
-      }
       const profileResponse = await studentApi.profile.get();
       const profilePayload = profileResponse.data?.data || profileResponse.data;
       setProfileData(profilePayload || null);

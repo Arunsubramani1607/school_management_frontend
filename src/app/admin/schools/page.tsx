@@ -397,11 +397,11 @@ export default function SchoolsPage() {
                       <div>
                         <div className="flex items-center gap-3">
                           <img
-                            src={school.logo || '/school_logo.jpeg'}
+                            src={school.logo || '/app_logo.jpeg'}
                             alt={`${school.name} logo`}
                             className="h-11 w-11 rounded-lg border border-slate-200 bg-white object-contain p-1"
                             onError={(event) => {
-                              event.currentTarget.src = '/school_logo.jpeg';
+                              event.currentTarget.src = '/app_logo.jpeg';
                             }}
                           />
                           <div>

@@ -4,7 +4,6 @@ import ToastProvider from '../components/providers/ToastProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import DemoModeBanner from '@/components/DemoModeBanner';
 
 export const metadata: Metadata = {
   title: 'School Management System',
@@ -27,7 +26,6 @@ export default function RootLayout({
         <ThemeProvider>
         <AuthProvider>
           {children}
-          <DemoModeBanner />
           <ToastProvider />
         </AuthProvider>
         </ThemeProvider>
